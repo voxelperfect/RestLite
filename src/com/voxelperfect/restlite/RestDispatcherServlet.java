@@ -79,7 +79,9 @@ public class RestDispatcherServlet extends HttpServlet {
 
 				RequestHandler handler = ref.getData();
 				if (handler.handlerMethod.getReturnType().equals(Void.TYPE)) {
-					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					if (resp.getStatus() == HttpServletResponse.SC_OK) {
+						resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					}
 				} else if (String.class.isAssignableFrom(result.getClass())) {
 					String contentType = "plain/text";
 					Produces produces = handler.handlerMethod
