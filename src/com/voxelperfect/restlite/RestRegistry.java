@@ -83,19 +83,6 @@ public class RestRegistry {
 		}
 	}
 
-	protected boolean paramsMatch(Class<?>[] paramTypes, Class<?>[] validTypes) {
-
-		boolean match = true;
-		int count = validTypes.length;
-		for (int i = 0; i < count; i++) {
-			if (!paramTypes[i].equals(validTypes[i])) {
-				match = false;
-				break;
-			}
-		}
-		return match;
-	}
-
 	protected void registerPath(String path, Object instance, Method method) {
 
 		PathTreeNode<RequestHandler> root = getHandlerRoot(method);
