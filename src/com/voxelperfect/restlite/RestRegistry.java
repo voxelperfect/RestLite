@@ -77,7 +77,14 @@ public class RestRegistry {
 					if (pathAnnotation != null) {
 						path += pathAnnotation.value();
 					}
-					registerPath(path, instance, method);
+
+					Class<?> returnType = method.getReturnType();
+					if (returnType.equals(Void.TYPE)
+							|| returnType.equals(String.class)) {
+						registerPath(path, instance, method);
+					} else {
+						throw new IllegalArgumentException("Handler method can return void or String");
+					}
 				}
 			}
 		}

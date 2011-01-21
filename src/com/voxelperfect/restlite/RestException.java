@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.SecurityContext;
 
@@ -66,20 +65,6 @@ public class RestException extends RuntimeException {
 
 	public Status getStatus() {
 		return status;
-	}
-
-	public Response toResponse() {
-
-		String message = getMessage();
-		if (message == null) {
-			message = "";
-		}
-
-		String entity = RestTools.errorResultToJson(status, message);
-
-		return Response.status(status)
-				.header("Content-Type", "application/json; charset=UTF-8")
-				.entity(entity).build();
 	}
 
 	public void toResponse(HttpServletResponse resp) throws IOException {

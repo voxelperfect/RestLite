@@ -75,32 +75,22 @@ public class RestDispatcherServlet extends HttpServlet {
 			try {
 				SecurityContext sc = RestSecurityContext.initialize(req);
 
-				Object result = callHandler(ref, req, sc);
+				Object result = callHandler(ref, req, sc, resp);
 
 				RequestHandler handler = ref.getData();
 				if (handler.handlerMethod.getReturnType().equals(Void.TYPE)) {
 					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
-				} else {
+				} else if (String.class.isAssignableFrom(result.getClass())) {
 					String contentType = "plain/text";
 					Produces produces = handler.handlerMethod
 							.getAnnotation(Produces.class);
 					if (produces != null) {
 						contentType = produces.value()[0];
 					}
-					
-					if (String.class.isAssignableFrom(result.getClass())) {
-						resp.setContentType(contentType);
-						resp.getWriter().write((String) result);
-					} 
-					/*
-					else if (Response.class.isAssignableFrom(result.getClass())) {
-						Response rsResp = (Response) result;
-						resp.setStatus(rsResp.getStatus());
-						resp.setContentType(contentType);
-					}
-					*/
-				}
 
+					resp.setContentType(contentType);
+					resp.getWriter().write((String) result);
+				}
 			} catch (RestException ex) {
 				ex.toResponse(resp);
 			} catch (Exception e) {
@@ -114,7 +104,7 @@ public class RestDispatcherServlet extends HttpServlet {
 	}
 
 	protected Object callHandler(DataRef<RequestHandler> ref,
-			HttpServletRequest req, SecurityContext sc)
+			HttpServletRequest req, SecurityContext sc, HttpServletResponse resp)
 			throws IllegalArgumentException, IllegalAccessException,
 			InvocationTargetException, IOException, SecurityException,
 			InstantiationException {
@@ -127,7 +117,7 @@ public class RestDispatcherServlet extends HttpServlet {
 
 		Class<?>[] paramTypes = handler.handlerMethodParamTypes;
 		Annotation[][] paramAnnotations = handler.handlerMethodParamAnnotations;
-		
+
 		int count = paramTypes.length;
 		Object[] params = new Object[count];
 		Annotation a, d;
@@ -158,6 +148,9 @@ public class RestDispatcherServlet extends HttpServlet {
 			if (a != null) {
 				if (paramTypes[p].equals(HttpServletRequest.class)) {
 					params[p] = req;
+					continue;
+				} else if (paramTypes[p].equals(HttpServletResponse.class)) {
+					params[p] = resp;
 					continue;
 				} else if (paramTypes[p].equals(SecurityContext.class)) {
 					params[p] = sc;
