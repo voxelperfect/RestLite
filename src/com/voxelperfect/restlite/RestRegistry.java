@@ -116,7 +116,7 @@ public class RestRegistry {
 		} else if (method.getAnnotation(POST.class) != null) {
 			root = handlerRoots.get("post");
 		} else if (method.getAnnotation(PUT.class) != null) {
-			root = handlerRoots.get("pit");
+			root = handlerRoots.get("put");
 		} else if (method.getAnnotation(DELETE.class) != null) {
 			root = handlerRoots.get("delete");
 		}
