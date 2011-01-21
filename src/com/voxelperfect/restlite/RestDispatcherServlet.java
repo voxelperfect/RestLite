@@ -81,16 +81,24 @@ public class RestDispatcherServlet extends HttpServlet {
 				if (handler.handlerMethod.getReturnType().equals(Void.TYPE)) {
 					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 				} else {
+					String contentType = "plain/text";
+					Produces produces = handler.handlerMethod
+							.getAnnotation(Produces.class);
+					if (produces != null) {
+						contentType = produces.value()[0];
+					}
+					
 					if (String.class.isAssignableFrom(result.getClass())) {
-						String contentType = "plain/text";
-						Produces produces = handler.handlerMethod
-								.getAnnotation(Produces.class);
-						if (produces != null) {
-							contentType = produces.value()[0];
-						}
 						resp.setContentType(contentType);
 						resp.getWriter().write((String) result);
+					} 
+					/*
+					else if (Response.class.isAssignableFrom(result.getClass())) {
+						Response rsResp = (Response) result;
+						resp.setStatus(rsResp.getStatus());
+						resp.setContentType(contentType);
 					}
+					*/
 				}
 
 			} catch (RestException ex) {
