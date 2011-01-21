@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="RestLite" default="jars" basedir=".">
+
+	<property name="restlite.version" value="0.1.0" />
+
+	<property name="restlite" location="." />
+	<property name="restlite.build.release" location="./build/release" />
+	<property name="restlite.build.debug" location="./build/debug" />
+	<property name="restlite.jars" location="./build/jars" />
+	<property name="restlite.src" location="./src" />
+	<property name="restlite.lib" location="./lib" />
+
+	<target name="cleanup">
+		<delete dir="${restlite.build.release}" />
+		<mkdir dir="${restlite.build.release}" />
+
+		<delete dir="${restlite.build.debug}" />
+		<mkdir dir="${restlite.build.debug}" />
+
+		<delete dir="${restlite.jars}" />
+		<mkdir dir="${restlite.jars}" />
+	</target>
+
+	<target name="compile" depends="cleanup">
+		<javac srcdir="${restlite.src}" debug="yes" optimize="no" destdir="${restlite.build.debug}" source="6" target="1.6" fork="yes" memoryMaximumSize="512m">
+			<classpath>
+				<pathelement location="${restlite.lib}/jsr311-api-1.1.1.jar" />
+				<pathelement location="${restlite.lib}/servlet-api.jar" />
+				<pathelement location="${restlite.lib}/slf4j-api-1.6.1.jar" />
+			</classpath>
+		</javac>
+
+		<javac srcdir="${restlite.src}" debug="no" optimize="yes" destdir="${restlite.build.release}" source="6" target="1.6" fork="yes" memoryMaximumSize="512m">
+			<classpath>
+				<pathelement location="${restlite.lib}/jsr311-api-1.1.1.jar" />
+				<pathelement location="${restlite.lib}/servlet-api.jar" />
+				<pathelement location="${restlite.lib}/slf4j-api-1.6.1.jar" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="jars" depends="compile">
+		<jar destfile="${restlite.jars}/restlite-${restlite.version}.jar" basedir="${restlite.build.release}" compress="yes" level="9" index="true" />
+		<jar destfile="${restlite.jars}/restlite-${restlite.version}-dbg.jar" basedir="${restlite.build.debug}" compress="yes" level="9" index="true" />
+		<jar destfile="${restlite.jars}/restlite-${restlite.version}-src.jar" basedir="${restlite.src}" compress="yes" level="9" index="true" />
+	</target>
+
+</project>
