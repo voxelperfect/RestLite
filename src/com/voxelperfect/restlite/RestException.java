@@ -1,6 +1,7 @@
 package com.voxelperfect.restlite;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.security.Principal;
 
 import javax.servlet.http.HttpServletResponse;
@@ -78,6 +79,8 @@ public class RestException extends RuntimeException {
 
 		resp.setStatus(status.getStatusCode());
 		resp.setContentType("application/json");
-		resp.getWriter().print(entity);
+		PrintWriter writer = resp.getWriter();
+		writer.print(entity);
+		writer.close();
 	}
 }

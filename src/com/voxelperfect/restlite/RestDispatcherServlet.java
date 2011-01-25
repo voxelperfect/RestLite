@@ -93,15 +93,24 @@ public class RestDispatcherServlet extends HttpServlet {
 
 					resp.setContentType(contentType);
 					PrintWriter writer = resp.getWriter();
-					writer.write((String) result);
+					writer.print((String) result);
 					writer.close();
 				}
-			} catch (RestException ex) {
-				ex.toResponse(resp);
+			} catch (RestException rex) {
+				rex.toResponse(resp);
+			} catch (InvocationTargetException iex) {
+				Throwable ex = iex.getTargetException();
+				if (RestException.class.isAssignableFrom(ex.getClass())) {
+					((RestException) ex).toResponse(resp);
+				} else {
+					RestException rex = new RestException(
+							Status.INTERNAL_SERVER_ERROR, ex.getMessage(), ex);
+					rex.toResponse(resp);
+				}
 			} catch (Exception e) {
-				RestException ex = new RestException(
+				RestException rex = new RestException(
 						Status.INTERNAL_SERVER_ERROR, e.getMessage(), e);
-				ex.toResponse(resp);
+				rex.toResponse(resp);
 			}
 		} else {
 			super.service(req, resp);
