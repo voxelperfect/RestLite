@@ -83,7 +83,8 @@ public class RestRegistry {
 							|| returnType.equals(String.class)) {
 						registerPath(path, instance, method);
 					} else {
-						throw new IllegalArgumentException("Handler method can return void or String");
+						String methodSpec = "["+clazz.getName()+":"+method.getName()+" -> "+returnType.getName()+"]";
+						throw new IllegalArgumentException("Handler method can return void or String " + methodSpec);
 					}
 				}
 			}
