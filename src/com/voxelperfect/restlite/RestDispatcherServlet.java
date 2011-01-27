@@ -84,17 +84,22 @@ public class RestDispatcherServlet extends HttpServlet {
 						resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 					}
 				} else if (String.class.isAssignableFrom(result.getClass())) {
-					String contentType = "plain/text";
-					Produces produces = handler.handlerMethod
-							.getAnnotation(Produces.class);
-					if (produces != null) {
-						contentType = produces.value()[0];
-					}
+					if (resp.getStatus() == HttpServletResponse.SC_OK
+							&& result.equals("")) {
+						resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+					} else {
+						String contentType = "plain/text";
+						Produces produces = handler.handlerMethod
+								.getAnnotation(Produces.class);
+						if (produces != null) {
+							contentType = produces.value()[0];
+						}
 
-					resp.setContentType(contentType);
-					PrintWriter writer = resp.getWriter();
-					writer.print((String) result);
-					writer.close();
+						resp.setContentType(contentType);
+						PrintWriter writer = resp.getWriter();
+						writer.print((String) result);
+						writer.close();
+					}
 				}
 			} catch (RestException rex) {
 				rex.toResponse(resp);
