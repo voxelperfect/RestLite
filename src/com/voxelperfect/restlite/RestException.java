@@ -24,12 +24,9 @@ public class RestException extends RuntimeException {
 
 		super(message);
 
-		SecurityContext sc = RestSecurityContext.getCurrent();
-
 		this.status = status;
 
-		Principal user = sc.getUserPrincipal();
-		this.userName = (user != null) ? user.getName() : null;
+		extractUserName();
 
 		log.error(getUserContext() + status + ": " + message);
 	}
@@ -43,20 +40,20 @@ public class RestException extends RuntimeException {
 
 		super(message, ex);
 
-		SecurityContext sc = RestSecurityContext.getCurrent();
-
 		this.status = status;
 
-		if (sc != null) {
-			Principal user = sc.getUserPrincipal();
-			this.userName = (user != null) ? user.getName() : null;
-		} else {
-			this.userName = null;
-		}
+		extractUserName();
 
 		log.error(getUserContext() + status + ": " + message, ex);
 	}
 
+	private void extractUserName() {
+	
+		SecurityContext sc = RestSecurityContext.getCurrent();
+		Principal user = (sc != null) ? sc.getUserPrincipal() : null;
+		this.userName = (user != null) ? user.getName() : null;
+	}
+	
 	private String getUserContext() {
 
 		if (userName == null || userName.equals(""))
