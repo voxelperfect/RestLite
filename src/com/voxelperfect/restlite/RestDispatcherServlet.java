@@ -79,13 +79,16 @@ public class RestDispatcherServlet extends HttpServlet {
 				Object result = callHandler(ref, req, sc, resp);
 
 				RequestHandler handler = ref.getData();
-				if (handler.handlerMethod.getReturnType().equals(Void.TYPE)) {
+				if (result == null 
+					&& resp.getStatus() == HttpServletResponse.SC_OK) {
+					resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
+				} else if (handler.handlerMethod.getReturnType().equals(Void.TYPE)) {
 					if (resp.getStatus() == HttpServletResponse.SC_OK) {
 						resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 					}
 				} else if (String.class.isAssignableFrom(result.getClass())) {
-					if (resp.getStatus() == HttpServletResponse.SC_OK
-							&& result.equals("")) {
+					if (result.equals("") 
+						&& resp.getStatus() == HttpServletResponse.SC_OK) {
 						resp.setStatus(HttpServletResponse.SC_NO_CONTENT);
 					} else {
 						String contentType = "plain/text";
