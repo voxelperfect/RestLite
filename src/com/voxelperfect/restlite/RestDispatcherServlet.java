@@ -37,6 +37,7 @@ public class RestDispatcherServlet extends HttpServlet {
 		primitiveTypeMap.put(Integer.TYPE, Integer.class);
 		primitiveTypeMap.put(Float.TYPE, Float.class);
 		primitiveTypeMap.put(Double.TYPE, Double.class);
+		primitiveTypeMap.put(Boolean.TYPE, Boolean.class);
 	}
 
 	@Override
