@@ -197,6 +197,9 @@ public class RestDispatcherServlet extends HttpServlet {
 		if (stringValue == null) {
 			stringValue = defaultValue;
 		}
+		if (stringValue == null) {
+			return null;
+		}
 
 		Class<?> mappedType = primitiveTypeMap.get(type);
 		if (mappedType != null) {
