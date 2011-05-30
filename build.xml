@@ -2,7 +2,7 @@
 
 <project name="RestLite" default="jars" basedir=".">
 
-	<property name="restlite.version" value="0.1.3" />
+	<property name="restlite.version" value="0.2.0" />
 
 	<property name="restlite" location="." />
 	<property name="restlite.build.release" location="./build/release" />
