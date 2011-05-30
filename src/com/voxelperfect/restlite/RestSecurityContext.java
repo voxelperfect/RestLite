@@ -3,6 +3,7 @@ package com.voxelperfect.restlite;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response.Status;
@@ -32,11 +33,18 @@ public class RestSecurityContext implements SecurityContext {
 		return sc;
 	}
 
+	public static RestSecurityContext initialize(Principal principal, String userIP, Set<String> roles) {
+		RestSecurityContext sc = new RestSecurityContext(principal, userIP, roles);
+		context.set(sc);
+		return sc;
+	}
+	
 	private HttpServletRequest request;
 	private Principal principal;
 	private String userName;
 	private String userIP;
 	private boolean isAdmin;
+	private Set<String> roles;
 
 	private RestSecurityContext(HttpServletRequest request) {
 
@@ -53,8 +61,29 @@ public class RestSecurityContext implements SecurityContext {
 				break;
 			}
 		}
+		
+		this.roles = null;
 	}
 
+	private RestSecurityContext(Principal principal, String userIP, Set<String> roles) {
+		
+		this.request = null;
+		
+		this.principal = principal;
+		this.userName = (principal != null) ? principal.getName() : null;
+		this.userIP = userIP;
+
+		isAdmin = false;
+		for (String role : adminRoles) {
+			if (roles.contains(role)) {
+				isAdmin = true;
+				break;
+			}
+		}
+		
+		this.roles = roles;
+	}
+	
 	public final void checkSameIdentity(String userID, String action) {
 
 		if (!sameIdentity(userID)) {
@@ -123,7 +152,7 @@ public class RestSecurityContext implements SecurityContext {
 	@Override
 	public boolean isUserInRole(String role) {
 
-		return (request != null) ? request.isUserInRole(role) : false;
+		return (request != null) ? request.isUserInRole(role) : ((roles != null) ? roles.contains(role) : false);
 	}
 
 }
